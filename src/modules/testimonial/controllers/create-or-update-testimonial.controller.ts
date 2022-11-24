@@ -18,7 +18,7 @@ import { CreateOrUpdateTestimonialDto } from '../dto/validation-testimonial.dto'
 import { CreateOrUpdateTestimonial } from '../services/use-cases';
 import { CreateOrUpdateTestimonialService } from '../services/mutations/create-or-update-testimonial.service';
 
-@Controller('Testimonials')
+@Controller('testimonials')
 export class CreateOrUpdateTestimonialController {
   constructor(
     private readonly createOrUpdateTestimonial: CreateOrUpdateTestimonial,

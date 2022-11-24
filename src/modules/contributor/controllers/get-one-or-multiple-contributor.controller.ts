@@ -20,8 +20,8 @@ import { FindContributorService } from '../services/query/find-contributor.servi
 @Controller('contributors')
 export class GetOneOrMultipleContributorController {
   constructor(
-    private readonly findOneContributorByService: FindOneContributorByService,
     private readonly findContributorService: FindContributorService,
+    private readonly findOneContributorByService: FindOneContributorByService,
   ) {}
 
   @Get(`/`)

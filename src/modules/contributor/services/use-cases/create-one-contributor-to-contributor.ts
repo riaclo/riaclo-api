@@ -19,8 +19,8 @@ import { contributorJob } from '../../jobs/contributor-job';
 export class CreateOneContributorToContributor {
   constructor(
     private readonly findOneUserByService: FindOneUserByService,
-    private readonly createOrUpdateContributorService: CreateOrUpdateContributorService,
     private readonly getAuthorizationToContributor: GetAuthorizationToContributor,
+    private readonly createOrUpdateContributorService: CreateOrUpdateContributorService,
   ) {}
 
   /** Get one Authorization to the database. */

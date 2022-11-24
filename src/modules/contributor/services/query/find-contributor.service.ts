@@ -66,6 +66,7 @@ export class FindContributorService {
                 'image', "profile"."image",
                 'color', "profile"."color",
                 'userId', "user"."id",
+                'user_uuid', "user"."uuid",
                 'email', "user"."email"
             ) AS "profile"`,
         )

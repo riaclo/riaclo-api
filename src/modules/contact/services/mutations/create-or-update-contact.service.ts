@@ -20,7 +20,15 @@ export class CreateOrUpdateContactService {
 
   /** Create one contact to the database. */
   async createOne(options: CreateContactOptions): Promise<Contact> {
-    const { email, phone, fullName, description, ipLocation, countryId } = {
+    const {
+      email,
+      phone,
+      fullName,
+      description,
+      ipLocation,
+      organizationId,
+      countryId,
+    } = {
       ...options,
     };
 
