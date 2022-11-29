@@ -27,6 +27,7 @@ export class CreateOrUpdateContactService {
       description,
       ipLocation,
       organizationId,
+      userCreatedId,
       countryId,
     } = {
       ...options,
@@ -39,6 +40,8 @@ export class CreateOrUpdateContactService {
     contact.phone = phone;
     contact.ipLocation = ipLocation;
     contact.description = description;
+    contact.organizationId = organizationId;
+    contact.userCreatedId = userCreatedId;
     contact.countryId = countryId;
     contact.fullName = fullName;
 

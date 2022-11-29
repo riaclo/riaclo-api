@@ -6,6 +6,7 @@ import {
   MaxLength,
   IsEmail,
   IsOptional,
+  IsEmpty,
 } from 'class-validator';
 export class CreateOrUpdateContactDto {
   @IsNotEmpty()
@@ -30,6 +31,14 @@ export class CreateOrUpdateContactDto {
   @IsOptional()
   @IsBoolean()
   isRed: boolean;
+
+  @IsOptional()
+  @IsInt()
+  userCreatedId: number;
+
+  @IsOptional()
+  @IsInt()
+  organizationId: number;
 
   @IsNotEmpty()
   @IsString()

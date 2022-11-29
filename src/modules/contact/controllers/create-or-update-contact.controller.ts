@@ -30,15 +30,27 @@ export class CreateOrUpdateContactController {
     @Res() res,
     @Body() createOrUpdateContactDto: CreateOrUpdateContactDto,
   ) {
-    const { fullName, email, phone, countryId } = {
+    const {
+      fullName,
+      email,
+      phone,
+      countryId,
+      organizationId,
+      userCreatedId,
+      description,
+    } = {
       ...createOrUpdateContactDto,
     };
+
     const [errors, result] = await useCatch(
       this.createOrUpdateContactService.createOne({
         email,
         fullName,
         phone,
         countryId,
+        userCreatedId,
+        organizationId,
+        description,
         ipLocation: getIpRequest(req),
       }),
     );

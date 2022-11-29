@@ -39,7 +39,7 @@ export class Contact extends BaseDeleteEntity {
   description?: string;
 
   @Column({ type: 'bigint', nullable: true })
-  userId?: number;
+  userCreatedId?: number;
 
   @Column({ type: 'bigint', nullable: true })
   organizationId?: number;

@@ -9,6 +9,9 @@ export type GetContactsSelections = {
     page: number;
     limit: number;
   };
+  option1?: {
+    organizationId: Contact['organizationId'];
+  };
 };
 
 export type GetOneContactSelections = {

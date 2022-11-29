@@ -16,11 +16,18 @@ export class FindContactService {
   async findAll(
     selections: GetContactsSelections,
   ): Promise<GetContactsSelections> {
-    const { filterQuery, pagination } = { ...selections };
+    const { option1, filterQuery, pagination } = { ...selections };
 
     let query = this.driver
       .createQueryBuilder('contact')
       .where('contact.deletedAt IS NULL');
+
+    if (option1) {
+      const { organizationId } = { ...option1 };
+      query = query.andWhere('contact.organizationId = :organizationId', {
+        organizationId,
+      });
+    }
 
     if (filterQuery?.q) {
       query = query.andWhere(
