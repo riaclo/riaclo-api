@@ -1,7 +1,7 @@
 import { configurations } from '../../../infrastructure/configurations/index';
 import { NodeMailServiceAdapter } from '../../integrations/aws/node-mailer-service-adapter';
 
-export const authPasswordResetMail = async (options: { resetPassword }) => {
+export const authNewUserCreateMail = async (options: { resetPassword }) => {
   const { resetPassword } = { ...options };
   const output = `
   <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -50,7 +50,7 @@ export const authPasswordResetMail = async (options: { resetPassword }) => {
   <td class="content-cell" style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative; max-width: 100vw; padding: 32px;">
 
   <span style="font-size:16px">
-  You are receiving this email because we received a password reset request for your account
+  You have been invited to register a ${configurations.datasite.name} account
   </span><br/><br/>
 
   <table class="subcopy" width="100%" cellpadding="0" cellspacing="0" role="presentation">
@@ -67,14 +67,12 @@ export const authPasswordResetMail = async (options: { resetPassword }) => {
   line-height: 45px;
   text-align: center;
   text-decoration: none;
-  width:100%" href="${configurations.datasite.urlClient}/reset-password/${
+  width:100%" href="${configurations.datasite.urlClient}/sign-up?token=${
     resetPassword.token
-  }">Reset Password</a>
+  }">Confirm registration</a>
   </td>
   </tr>
   </table><br/><br/>
-
-  <p style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative; font-size: 16px; line-height: 1.5em; margin-top: 0; text-align: left;">If you did not request a password reset, no further action is required.</p>
   <p style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative; font-size: 16px; line-height: 1.5em; margin-top: 0; text-align: left;">Thanks,<br>The ${
     configurations.datasite.name
   } Team</p>
@@ -84,11 +82,11 @@ export const authPasswordResetMail = async (options: { resetPassword }) => {
   <tr>
   <td style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative;">
   <p style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative; line-height: 1.5em; margin-top: 0; text-align: left; font-size: 14px;">If you’re having trouble clicking the "Reset Password" button, copy and paste the URL below
-  into your web browser is valid for 30 minutes: <span class="break-all" style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative; word-break: break-all;">
-  <a href="${configurations.datasite.urlClient}/reset-password/${
+  into your web browser is valid for 30 days: <span class="break-all" style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative; word-break: break-all;">
+  <a href="${configurations.datasite.urlClient}/sign-up?token=${
     resetPassword.token
-  }/" style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative; color: #3869d4;">
-  ${configurations.datasite.urlClient}/reset-password/${resetPassword.token}
+  }" style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative; color: #3869d4;">
+  ${configurations.datasite.urlClient}/sign-up?token=${resetPassword.token}
   </a></span></p>
   
   </td>
@@ -137,7 +135,7 @@ export const authPasswordResetMail = async (options: { resetPassword }) => {
   // create reusable transporter object using the default SMTP transport
   await NodeMailServiceAdapter({
     to: [`${resetPassword.email}`],
-    subject: `${configurations.datasite.name} - Reset password`,
+    subject: `You have been invited to join ${resetPassword?.organizationInUtilization?.name} on ${configurations.datasite.name}`,
     html: output,
   });
 };

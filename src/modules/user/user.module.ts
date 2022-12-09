@@ -19,7 +19,7 @@ import { ResetPassword } from '../../models/ResetPassword';
 import { FindOneResetPasswordByService } from '../reset-password/services/query/find-one-reset-password-by.service';
 import { ResetUpdatePasswordUserService } from './services/mutations/reset-update-password-user.service';
 import { GetOneOrMultipleUsersController } from './controllers/user/get-one-or-multiple-users.controller';
-import { UpdateUserController } from './controllers/user/update-user.controller';
+import { CreateOrUpdateUserController } from './controllers/user/create-or-update-user.controller';
 import { CheckUserService } from './middleware/check-user.service';
 import { JwtAuthStrategy } from './middleware/jwt-auth.strategy';
 import { FindOneApplicationTokenByService } from '../application-token/services/query/find-one-application-token-by.service';
@@ -37,6 +37,7 @@ import { FindOneCurrencyByService } from '../currency/services/query/find-one-cu
 import { Currency } from '../../models/Currency';
 import { FindOneCountryByService } from '../country/services/query/find-one-country-by.service';
 import { Country } from '../../models/Country';
+import { CreateOneOrMultipleUser } from './services/use-cases/create-one-or-multiple-user';
 
 @Module({
   imports: [
@@ -53,7 +54,7 @@ import { Country } from '../../models/Country';
   ],
   controllers: [
     AuthUserController,
-    UpdateUserController,
+    CreateOrUpdateUserController,
     GetOneOrMultipleUsersController,
   ],
   providers: [
@@ -85,6 +86,7 @@ import { Country } from '../../models/Country';
     ConfirmAccountTokenUser,
     UpdateOrganizationToUser,
     GetAuthorizationToContributor,
+    CreateOneOrMultipleUser,
     UpdateInformationToUser,
   ],
 })

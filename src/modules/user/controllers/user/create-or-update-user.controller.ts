@@ -1,5 +1,5 @@
-import { generateLongUUID } from './../../../../infrastructure/utils/commons/generate-long-uuid';
-import { generateUUID } from './../../../../infrastructure/utils/commons/generate-uuid';
+import { generateLongUUID } from '../../../../infrastructure/utils/commons/generate-long-uuid';
+import { generateUUID } from '../../../../infrastructure/utils/commons/generate-uuid';
 import {
   Controller,
   Get,
@@ -15,14 +15,18 @@ import {
   Req,
   Res,
   ParseBoolPipe,
+  Post,
+  Headers,
 } from '@nestjs/common';
 import { reply } from '../../../../infrastructure/utils/reply';
 import { useCatch } from '../../../../infrastructure/utils/use-catch';
 import { CreateOrUpdateUserService } from '../../services/mutations/create-or-update-user.service';
 import {
+  CreateOneUserDto,
   UpdateEmailUserDto,
   UpdateInfoUserDto,
 } from '../../dto/validation-user.dto';
+import * as amqplib from 'amqplib';
 import { UpdateOrganizationToUser } from '../../services/use-cases/update-organization-to-user';
 import { JwtAuthGuard } from '../../middleware/jwt-auth.guard';
 import { UpdateChangePasswordUserDto } from '../../dto/validation-user.dto';
@@ -30,19 +34,58 @@ import { ChangePasswordUser } from '../../services/use-cases/change-password-use
 import { UpdateInformationToUser } from '../../services/use-cases/update-information-to-user';
 import { CreateOrUpdateProfileDto } from '../../../profile/dto/validation-profile.dto';
 import { CreateOrUpdateProfileService } from '../../../profile/services/mutations/create-or-update-profile.service';
+import { CreateOneOrMultipleUser } from '../../services/use-cases/create-one-or-multiple-user';
+import { getIpRequest } from '../../../../infrastructure/utils/commons/get-ip-request';
+import { authNewUserCreateJob } from '../../jobs/auth-login-and-register-job';
+import { configurations } from '../../../../infrastructure/configurations/index';
 
 @Controller('users')
-export class UpdateUserController {
+export class CreateOrUpdateUserController {
   constructor(
     private readonly changePasswordUser: ChangePasswordUser,
     private readonly updateInformationToUser: UpdateInformationToUser,
     private readonly updateOrganizationToUser: UpdateOrganizationToUser,
     private readonly createOrUpdateUserService: CreateOrUpdateUserService,
+    private readonly createOneOrMultipleUser: CreateOneOrMultipleUser,
     private readonly createOrUpdateProfileService: CreateOrUpdateProfileService,
   ) {}
 
+  @Post(`/create`)
+  @UseGuards(JwtAuthGuard)
+  async createOneUser(
+    @Res() res,
+    @Req() req,
+    @Body() createOneUserDto: CreateOneUserDto,
+    @Headers('User-Agent') userAgent: string,
+  ) {
+    const { user } = req;
+    const [errors, result] = await useCatch(
+      this.createOneOrMultipleUser.createOne({
+        ...createOneUserDto,
+        ipLocation: getIpRequest(req),
+        userAgent,
+        user,
+      }),
+    );
+    if (errors) {
+      throw new NotFoundException(errors);
+    }
+
+    /** Send information to Job */
+    const queue = 'user-password-reset';
+    const connect = await amqplib.connect(
+      configurations.implementations.amqp.link,
+    );
+    const channel = await connect.createChannel();
+    await channel.assertQueue(queue, { durable: false });
+    await channel.sendToQueue(queue, Buffer.from(JSON.stringify(result)));
+    await authNewUserCreateJob({ channel, queue });
+
+    return reply({ res, results: result });
+  }
+
   @Put(`/update/:user_uuid`)
-  async createOneContact(
+  async updateOneUser(
     @Response() res: any,
     @Body() updateInfoUserDto: UpdateInfoUserDto,
     @Param('user_uuid', ParseUUIDPipe) user_uuid: string,

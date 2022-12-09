@@ -135,3 +135,31 @@ export class CreateRegisterUserDto {
   @Match('password')
   passwordConfirm: string;
 }
+
+export class CreateOneUserDto {
+  @IsNotEmpty()
+  @IsString()
+  @MaxLength(100)
+  fullName: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @MaxLength(100)
+  @IsEmail()
+  email: string;
+
+  @IsNotEmpty()
+  @IsInt()
+  roleId: number;
+
+  @IsOptional()
+  @IsString()
+  ipLocation: string;
+
+  @IsOptional()
+  @IsString()
+  userAgent: string;
+
+  @IsOptional()
+  user: any;
+}

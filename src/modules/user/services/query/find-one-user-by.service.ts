@@ -35,7 +35,9 @@ export class FindOneUserByService {
 
     if (option5) {
       const { token } = { ...option5 };
-      query = query.andWhere('user.token = :token', { token });
+      query = query
+        .andWhere('user.token = :token', { token })
+        .andWhere('user.confirmedAt IS NULL');
     }
 
     if (option6) {
