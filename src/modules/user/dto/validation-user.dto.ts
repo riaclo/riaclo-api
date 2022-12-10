@@ -104,12 +104,12 @@ export class CreateLoginUserDto {
 export class CreateRegisterUserDto {
   @IsNotEmpty()
   @IsString()
-  @MaxLength(100)
+  @MaxLength(50)
   firstName: string;
 
   @IsNotEmpty()
   @IsString()
-  @MaxLength(100)
+  @MaxLength(50)
   lastName: string;
 
   @IsOptional()
@@ -118,7 +118,7 @@ export class CreateRegisterUserDto {
 
   @IsNotEmpty()
   @IsString()
-  @MaxLength(100)
+  @MaxLength(50)
   @IsEmail()
   email: string;
 

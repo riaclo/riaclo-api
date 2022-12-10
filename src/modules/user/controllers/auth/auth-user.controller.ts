@@ -27,7 +27,10 @@ import {
 } from '../../dto/validation-user.dto';
 import { ConfirmAccountTokenUser } from '../../services/use-cases/confirm-account-token-user';
 import { configurations } from '../../../../infrastructure/configurations/index';
-import { authPasswordResetJob } from '../../jobs/auth-login-and-register-job';
+import {
+  authPasswordResetJob,
+  authRegisterJob,
+} from '../../jobs/auth-login-and-register-job';
 import { getIpRequest } from '../../../../infrastructure/utils/commons/get-ip-request';
 import { CreateOrUpdateOneOrMultipleUser } from '../../services/use-cases/create-or-update-one-or-multiple-user';
 
@@ -59,6 +62,16 @@ export class AuthUserController {
     if (errors) {
       throw new NotFoundException(errors);
     }
+
+    const queue = 'user-register';
+    const connect = await amqplib.connect(
+      configurations.implementations.amqp.link,
+    );
+    const channel = await connect.createChannel();
+    await channel.assertQueue(queue, { durable: false });
+    await channel.sendToQueue(queue, Buffer.from(JSON.stringify(results)));
+    await authRegisterJob({ channel, queue });
+
     return reply({ res, results });
   }
 

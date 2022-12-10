@@ -140,16 +140,6 @@ export class CreateRegisterUser {
     if (__errorOr) {
       throw new NotFoundException(__errorOr);
     }
-
-    const queue = 'user-register';
-    const connect = await amqplib.connect(
-      configurations.implementations.amqp.link,
-    );
-    const channel = await connect.createChannel();
-    await channel.assertQueue(queue, { durable: false });
-    await channel.sendToQueue(queue, Buffer.from(JSON.stringify(saveItem)));
-    await authRegisterJob({ channel, queue });
-
     // if (codeVoucher) {
     //   const [_errorC, voucher] = await useCatch(
     //     getOneVoucherApi({ code: codeVoucher }),
