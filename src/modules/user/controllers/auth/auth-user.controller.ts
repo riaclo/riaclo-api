@@ -23,11 +23,13 @@ import {
   CreateLoginUserDto,
   UpdateResetPasswordUserDto,
   TokenUserDto,
+  ConfirmOneRegisterCreateUserDto,
 } from '../../dto/validation-user.dto';
 import { ConfirmAccountTokenUser } from '../../services/use-cases/confirm-account-token-user';
 import { configurations } from '../../../../infrastructure/configurations/index';
 import { authPasswordResetJob } from '../../jobs/auth-login-and-register-job';
 import { getIpRequest } from '../../../../infrastructure/utils/commons/get-ip-request';
+import { CreateOrUpdateOneOrMultipleUser } from '../../services/use-cases/create-or-update-one-or-multiple-user';
 
 @Controller()
 export class AuthUserController {
@@ -36,6 +38,7 @@ export class AuthUserController {
     private readonly createLoginUser: CreateLoginUser,
     private readonly confirmAccountTokenUser: ConfirmAccountTokenUser,
     private readonly resetUpdatePasswordUserService: ResetUpdatePasswordUserService,
+    private readonly createOrUpdateOneOrMultipleUser: CreateOrUpdateOneOrMultipleUser,
   ) {}
 
   /** Register new user */
@@ -51,6 +54,24 @@ export class AuthUserController {
         ...createRegisterUserDto,
         ipLocation: getIpRequest(req),
         userAgent,
+      }),
+    );
+    if (errors) {
+      throw new NotFoundException(errors);
+    }
+    return reply({ res, results });
+  }
+
+  /** Register new user */
+  @Put(`/register/confirm-create`)
+  async confirmOneRegisterUserCreate(
+    @Res() res,
+    @Req() req,
+    @Body() confirmOneRegisterCreateUserDto: ConfirmOneRegisterCreateUserDto,
+  ) {
+    const [errors, results] = await useCatch(
+      this.createOrUpdateOneOrMultipleUser.updateOneUserCreate({
+        ...confirmOneRegisterCreateUserDto,
       }),
     );
     if (errors) {

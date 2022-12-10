@@ -1,5 +1,4 @@
 import { generateLongUUID } from '../../../../infrastructure/utils/commons/generate-long-uuid';
-import { generateUUID } from '../../../../infrastructure/utils/commons/generate-uuid';
 import {
   Controller,
   Get,
@@ -34,7 +33,7 @@ import { ChangePasswordUser } from '../../services/use-cases/change-password-use
 import { UpdateInformationToUser } from '../../services/use-cases/update-information-to-user';
 import { CreateOrUpdateProfileDto } from '../../../profile/dto/validation-profile.dto';
 import { CreateOrUpdateProfileService } from '../../../profile/services/mutations/create-or-update-profile.service';
-import { CreateOneOrMultipleUser } from '../../services/use-cases/create-one-or-multiple-user';
+import { CreateOrUpdateOneOrMultipleUser } from '../../services/use-cases/create-or-update-one-or-multiple-user';
 import { getIpRequest } from '../../../../infrastructure/utils/commons/get-ip-request';
 import { authNewUserCreateJob } from '../../jobs/auth-login-and-register-job';
 import { configurations } from '../../../../infrastructure/configurations/index';
@@ -46,7 +45,7 @@ export class CreateOrUpdateUserController {
     private readonly updateInformationToUser: UpdateInformationToUser,
     private readonly updateOrganizationToUser: UpdateOrganizationToUser,
     private readonly createOrUpdateUserService: CreateOrUpdateUserService,
-    private readonly createOneOrMultipleUser: CreateOneOrMultipleUser,
+    private readonly createOrUpdateOneOrMultipleUser: CreateOrUpdateOneOrMultipleUser,
     private readonly createOrUpdateProfileService: CreateOrUpdateProfileService,
   ) {}
 
@@ -60,7 +59,7 @@ export class CreateOrUpdateUserController {
   ) {
     const { user } = req;
     const [errors, result] = await useCatch(
-      this.createOneOrMultipleUser.createOne({
+      this.createOrUpdateOneOrMultipleUser.createOne({
         ...createOneUserDto,
         ipLocation: getIpRequest(req),
         userAgent,
@@ -72,7 +71,7 @@ export class CreateOrUpdateUserController {
     }
 
     /** Send information to Job */
-    const queue = 'user-password-reset';
+    const queue = 'user-new-contributor-create';
     const connect = await amqplib.connect(
       configurations.implementations.amqp.link,
     );

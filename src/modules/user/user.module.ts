@@ -37,7 +37,7 @@ import { FindOneCurrencyByService } from '../currency/services/query/find-one-cu
 import { Currency } from '../../models/Currency';
 import { FindOneCountryByService } from '../country/services/query/find-one-country-by.service';
 import { Country } from '../../models/Country';
-import { CreateOneOrMultipleUser } from './services/use-cases/create-one-or-multiple-user';
+import { CreateOrUpdateOneOrMultipleUser } from './services/use-cases/create-or-update-one-or-multiple-user';
 
 @Module({
   imports: [
@@ -86,7 +86,7 @@ import { CreateOneOrMultipleUser } from './services/use-cases/create-one-or-mult
     ConfirmAccountTokenUser,
     UpdateOrganizationToUser,
     GetAuthorizationToContributor,
-    CreateOneOrMultipleUser,
+    CreateOrUpdateOneOrMultipleUser,
     UpdateInformationToUser,
   ],
 })

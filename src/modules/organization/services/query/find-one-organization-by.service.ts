@@ -58,7 +58,8 @@ export class FindOneOrganizationByService {
               'user_uuid', "user"."uuid",
               'email', "user"."email",
               'profileId', "user"."profileId",
-              'fullName', "profile"."fullName",
+              'firstName', "profile"."firstName",
+              'lastName', "profile"."lastName",
               'color', "profile"."color",
               'image', "profile"."image"
           ) AS "profileOwner"`,

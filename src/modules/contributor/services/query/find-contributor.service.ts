@@ -62,7 +62,8 @@ export class FindContributorService {
       query = query
         .addSelect(
           /*sql*/ `jsonb_build_object(
-                'fullName', "profile"."fullName",
+                'firstName', "profile"."firstName",
+                'lastName', "profile"."lastName",
                 'image', "profile"."image",
                 'color', "profile"."color",
                 'userId', "user"."id",

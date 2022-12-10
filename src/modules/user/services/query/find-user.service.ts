@@ -31,7 +31,8 @@ export class FindUserService {
         /*sql*/ `jsonb_build_object(
       'userId', "user"."id",
       'id', "profile"."id",
-      'fullName', "profile"."fullName",
+      'firstName', "profile"."firstName",
+      'lastName', "profile"."lastName",
       'image', "profile"."image",
       'color', "profile"."color",
       'currencyId', "profile"."currencyId",

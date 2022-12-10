@@ -36,7 +36,8 @@ export class CreateLoginUser {
       id: user.id,
       uuid: user.uuid,
       profileId: user.profileId,
-      fullName: user?.profile?.fullName,
+      firstName: user?.profile?.firstName,
+      lastName: user?.profile?.lastName,
       organizationId: user.organizationInUtilizationId,
     };
 

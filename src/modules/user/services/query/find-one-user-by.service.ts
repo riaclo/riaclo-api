@@ -77,7 +77,8 @@ export class FindOneUserByService {
         /*sql*/ `jsonb_build_object(
       'id', "profile"."id",
       'userId', "user"."id",
-      'fullName', "profile"."fullName",
+      'firstName', "profile"."firstName",
+      'lastName', "profile"."lastName",
       'image', "profile"."image",
       'color', "profile"."color",
       'currencyId', "profile"."currencyId",

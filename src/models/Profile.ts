@@ -17,7 +17,10 @@ export class Profile extends BaseDeleteEntity {
   id?: number;
 
   @Column({ nullable: true })
-  fullName?: string;
+  firstName?: string;
+
+  @Column({ nullable: true })
+  lastName?: string;
 
   @Column({ type: 'bigint', nullable: true })
   currencyId?: number;

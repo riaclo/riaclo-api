@@ -20,13 +20,14 @@ export class CreateOrUpdateProfileService {
 
   /** Create one profile to the database. */
   async createOne(options: CreateProfileOptions): Promise<Profile> {
-    const { fullName, currencyId, image, countryId, url } = {
+    const { firstName, lastName, currencyId, image, countryId, url } = {
       ...options,
     };
 
     const profile = new Profile();
     profile.image = image;
-    profile.fullName = fullName;
+    profile.firstName = firstName;
+    profile.lastName = lastName;
     profile.color = getRandomElement(colorsArrays);
     profile.currencyId = currencyId;
     profile.countryId = countryId;
@@ -46,7 +47,7 @@ export class CreateOrUpdateProfileService {
     options: UpdateProfileOptions,
   ): Promise<Profile> {
     const { option1 } = { ...selections };
-    const { fullName, currencyId, url, image, deletedAt } = {
+    const { firstName, lastName, currencyId, url, image, deletedAt } = {
       ...options,
     };
 
@@ -64,7 +65,8 @@ export class CreateOrUpdateProfileService {
 
     findItem.image = image;
     findItem.url = url;
-    findItem.fullName = fullName;
+    findItem.firstName = firstName;
+    findItem.lastName = lastName;
     findItem.currencyId = currencyId;
     findItem.deletedAt = deletedAt;
 

@@ -105,7 +105,12 @@ export class CreateRegisterUserDto {
   @IsNotEmpty()
   @IsString()
   @MaxLength(100)
-  fullName: string;
+  firstName: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @MaxLength(100)
+  lastName: string;
 
   @IsOptional()
   @IsString()
@@ -136,11 +141,42 @@ export class CreateRegisterUserDto {
   passwordConfirm: string;
 }
 
+export class ConfirmOneRegisterCreateUserDto {
+  @IsNotEmpty()
+  @IsString()
+  @MaxLength(100)
+  firstName: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @MaxLength(100)
+  lastName: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @MaxLength(100)
+  token: string;
+
+  @IsNotEmpty()
+  @MinLength(8)
+  @IsString()
+  password: string;
+
+  @IsString()
+  @MinLength(8)
+  @Match('password')
+  passwordConfirm: string;
+}
 export class CreateOneUserDto {
   @IsNotEmpty()
   @IsString()
   @MaxLength(100)
-  fullName: string;
+  firstName: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @MaxLength(100)
+  lastName: string;
 
   @IsNotEmpty()
   @IsString()

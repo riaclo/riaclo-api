@@ -7,11 +7,11 @@ import {
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
-import * as amqplib from 'amqplib';
-import { CreateOneUserDto } from '../../dto/validation-user.dto';
+import {
+  CreateOneUserDto,
+  ConfirmOneRegisterCreateUserDto,
+} from '../../dto/validation-user.dto';
 import { useCatch } from '../../../../infrastructure/utils/use-catch';
-import { configurations } from '../../../../infrastructure/configurations';
-import { authRegisterJob } from '../../jobs/auth-login-and-register-job';
 import { CreateOrUpdateContributorService } from '../../../contributor/services/mutations/create-or-update-contributor.service';
 import { FindOneCurrencyByService } from '../../../currency/services/query/find-one-currency-by.service';
 import { getOneLocationIpApi } from '../../../integrations/ip-api/api/index';
@@ -19,7 +19,7 @@ import { FindOneCountryByService } from '../../../country/services/query/find-on
 import { generateLongUUID } from '../../../../infrastructure/utils/commons/generate-long-uuid';
 
 @Injectable()
-export class CreateOneOrMultipleUser {
+export class CreateOrUpdateOneOrMultipleUser {
   constructor(
     private readonly findOneUserByService: FindOneUserByService,
     private readonly findOneCountryByService: FindOneCountryByService,
@@ -31,9 +31,10 @@ export class CreateOneOrMultipleUser {
 
   /** Create one register to the database. */
   async createOne(options: CreateOneUserDto): Promise<any> {
-    const { email, fullName, roleId, ipLocation, userAgent, user } = {
-      ...options,
-    };
+    const { email, firstName, lastName, roleId, ipLocation, userAgent, user } =
+      {
+        ...options,
+      };
 
     /** Find currency */
     const findIpLocation = await getOneLocationIpApi({ ipLocation });
@@ -73,7 +74,8 @@ export class CreateOneOrMultipleUser {
     /** Create Profile */
     const [errorP, profile] = await useCatch(
       this.createOrUpdateProfileService.createOne({
-        fullName,
+        lastName,
+        firstName,
         countryId: country?.id,
         currencyId: currency?.id,
       }),
@@ -117,6 +119,53 @@ export class CreateOneOrMultipleUser {
       email: saveOneUser?.email,
       token: saveOneUser?.token,
       organizationInUtilization: user?.organizationInUtilization,
+    };
+  }
+
+  /** Update  to the database. */
+  async updateOneUserCreate(
+    options: ConfirmOneRegisterCreateUserDto,
+  ): Promise<any> {
+    const { firstName, lastName, password, token } = {
+      ...options,
+    };
+
+    /** Find one user */
+    const [_error, findOneUser] = await useCatch(
+      this.findOneUserByService.findOneBy({ option5: { token } }),
+    );
+    if (_error) {
+      throw new NotFoundException(_error);
+    }
+    if (!findOneUser)
+      throw new HttpException(`User or token not found`, HttpStatus.NOT_FOUND);
+
+    /** Create Profile */
+    const [errorP, updateProfile] = await useCatch(
+      this.createOrUpdateProfileService.updateOne(
+        { option1: { profileId: findOneUser?.profileId } },
+        { lastName, firstName },
+      ),
+    );
+    if (errorP) {
+      throw new NotFoundException(errorP);
+    }
+
+    /** Save user */
+    const [errorU, updateOneUser] = await useCatch(
+      this.createOrUpdateUserService.updateOne(
+        { option1: { userId: findOneUser?.id } },
+        { password: password, noHashPassword: null, confirmedAt: new Date() },
+      ),
+    );
+    if (errorU) {
+      throw new NotFoundException(errorU);
+    }
+
+    return {
+      id: updateOneUser?.id,
+      firstName: updateProfile?.firstName,
+      lastName: updateProfile?.lastName,
     };
   }
 }

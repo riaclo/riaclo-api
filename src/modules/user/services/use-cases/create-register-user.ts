@@ -33,7 +33,15 @@ export class CreateRegisterUser {
 
   /** Create one register to the database. */
   async execute(options: CreateRegisterUserDto): Promise<any> {
-    const { email, password, fullName, ipLocation, codeVoucher, userAgent } = {
+    const {
+      lastName,
+      firstName,
+      email,
+      password,
+      ipLocation,
+      codeVoucher,
+      userAgent,
+    } = {
       ...options,
     };
 
@@ -74,7 +82,8 @@ export class CreateRegisterUser {
     /** Create Profile */
     const [errorP, profile] = await useCatch(
       this.createOrUpdateProfileService.createOne({
-        fullName,
+        firstName,
+        lastName,
         countryId: country?.id || 38,
         currencyId: currency?.id || 1,
       }),
@@ -86,7 +95,7 @@ export class CreateRegisterUser {
     /** Create Organization */
     const [_errorOr, organization] = await useCatch(
       this.createOrUpdateOrganizationService.createOne({
-        name: `${fullName}`,
+        name: `${firstName} ${lastName}`,
       }),
     );
     if (_errorOr) {
