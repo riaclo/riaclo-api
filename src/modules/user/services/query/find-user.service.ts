@@ -41,6 +41,18 @@ export class FindUserService {
   ) AS "profile"`,
       )
       .addSelect(
+        /*sql*/ `(
+        SELECT jsonb_build_object(
+        'name', "role"."name"
+        )
+        FROM "contributor" "con"
+        INNER JOIN "role" "role" ON "con"."roleId" = "role"."id"
+        WHERE "con"."deletedAt" IS NULL 
+        AND "user"."id" = "con"."userId"
+        AND "user"."organizationInUtilizationId" = "con"."organizationId"
+        ) AS "role"`,
+      )
+      .addSelect(
         /*sql*/ `jsonb_build_object(
           'id', "organization"."id",
           'uuid', "organization"."uuid",
@@ -58,9 +70,13 @@ export class FindUserService {
         new Brackets((qb) => {
           qb.where('user.email ::text ILIKE :searchQuery', {
             searchQuery: `%${filterQuery?.q}%`,
-          }).orWhere('profile.fullName ::text ILIKE :searchQuery', {
-            searchQuery: `%${filterQuery?.q}%`,
-          });
+          })
+            .orWhere('profile.firstName ::text ILIKE :searchQuery', {
+              searchQuery: `%${filterQuery?.q}%`,
+            })
+            .orWhere('profile.lastName ::text ILIKE :searchQuery', {
+              searchQuery: `%${filterQuery?.q}%`,
+            });
         }),
       );
     }
